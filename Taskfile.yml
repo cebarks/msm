@@ -1,0 +1,53 @@
+# https://taskfile.dev
+version: '3'
+
+vars:
+  EXE: bin/msm{{exeExt}}
+  MAIN_CMD: ./cmd/msm
+
+tasks:
+  default:
+    cmds:
+      - task -l
+    silent: true
+
+  run:
+    desc: run locally
+    deps: [build]
+    cmds:
+      -  ./{{.EXE}}
+
+  test:
+    desc: run all tests
+    cmds:
+      - go test ./... -cover -covermode atomic
+
+  testv:
+    desc: run all tests verbosely
+    cmds:
+      - go test ./... -cover -covermode atomic -v
+
+  build:
+    desc: build executable to {{.EXE}}
+    cmds:
+      - go build -o {{.EXE}} {{.MAIN_CMD}}
+    sources:
+      - ./**/*.go
+    generates:
+      - ./{{.EXE}}
+
+  connect:
+    desc: connect to a local runnning instance
+    cmds:
+      - ssh localhost -p 2222 -o "StrictHostKeyChecking=no"
+
+  download-server:
+    desc: downloads the mc server jar
+    cmds:
+      - wget https://launcher.mojang.com/v1/objects/1b557e7b033b583cd9f66746b7a9ab1ec1673ced/server.jar
+
+  todo:
+    desc: find all //TODO comments in the repo
+    silent: true
+    cmds:
+      - grep -nr --exclude="Taskfile.yml" --exclude-dir=".git" "//TODO" . 

@@ -1,0 +1,5 @@
+bin/
+.task/
+test_server/
+
+*.jar
